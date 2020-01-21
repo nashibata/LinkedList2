@@ -9,19 +9,30 @@ using namespace std;
 
 Node* head = NULL;
 
-void add(char* name, int id, float gpa) {
+void add(Node* current, char* name, int id, float gpa) {
+  //add function taken from Tpanda03, he gave me advice on how to order nodes
   Student* student = new Student(name, id, gpa);
-  Node* currentNode = head;
-  if (currentNode == NULL) {
+
+  if (head == NULL) { //first node
     head = new Node(student);
+  }
+  else if (student->getID() < head->getStudent()->getID()) { //if the second inputted ndoe is less than the head node, make that the head node
+    Node* temp = new Node(head->getStudent());
+    temp->setNext(head->getNext());
     head->setStudent(student);
+    head->setNext(temp);
+  }
+  else if (current->getNext() == NULL) { //if next doesn't exist
+    Node* New = new Node(student);
+    current->setNext(New);
+  }
+  else if (student->getID() < current->getNext()->getStudent()->getID()) { //if the new node is less than the current node, set it to current's next
+    Node* New = new Node(student);
+    New->setNext(current->getNext());
+    current->setNext(New);
   }
   else {
-    while (currentNode->getNext() != NULL) {
-      currentNode = currentNode->getNext();
-    }
-    currentNode->setNext(new Node(student));
-    currentNode->getNext()->setStudent(student);
+    add(current->getNext(), name, id, gpa);
   }
 }
 
@@ -112,7 +123,7 @@ int main() {
       cin.clear();
       cin.ignore(100, '\n');
 
-      add(name, id, gpa);
+      add(head, name, id, gpa);
       print(head);
       count++;
     }
